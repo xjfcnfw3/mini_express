@@ -21,4 +21,25 @@ export class Middlewares {
         callback = arg;
         this.stack.push(new Layer(path, callback));
     }
+
+    public handle(req, res) {
+        let idx = 0; //현재 layer 인덱스
+        const stack = this.stack;
+        const path = req.path;
+        next();
+
+        function next() {
+            let match;
+            let layer
+            while (match !== true && idx < stack.length) {
+                layer  = stack[idx++];
+                match = layer.match(path).result;
+            }
+            process(layer)
+        }
+
+        function process(layer) {
+            layer.handle(req, res, next);
+        }
+    }
 }

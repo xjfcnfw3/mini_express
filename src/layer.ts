@@ -14,6 +14,10 @@ export default class Layer {
         this.existRegex = path !== "/";
     }
 
+    public handleRequest(req, res, next) {
+        this.handle(req, res, next);
+    }
+
     public match(path): {result:boolean, params:{}} {
         if (path != null && !this.existRegex) return {result: true, params: {}};
         const match = this.regex.exec(path);
