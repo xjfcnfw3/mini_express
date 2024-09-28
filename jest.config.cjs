@@ -3,6 +3,12 @@ module.exports = {
     testEnvironment: 'node',
     moduleFileExtensions: ['js', 'mjs', 'cjs', 'jsx', 'ts', 'tsx', 'json', 'node'],
     transform: {
-        "^.+\\.[tj]sx?$": "babel-jest",
+        '^.+\\.(ts|tsx)$': [
+            'ts-jest',
+            {
+                useESM: true,
+                isolatedModules: true
+            },
+        ],
     },
 };
