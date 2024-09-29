@@ -9,6 +9,8 @@
     "rootDir": "./",
     "moduleResolution": "node",
     "outDir": "./dist",
+    "noImplicitAny": false,
+    "strictNullChecks": false,
     "paths": {
       "*": ["*"]
     }
