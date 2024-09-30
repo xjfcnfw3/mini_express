@@ -1,5 +1,6 @@
 import {Middlewares} from "./Middlewares";
 import Layer from "./layer";
+import Router from "./Router";
 
 describe('Middlewares 테스트', () => {
     let middlewares;
@@ -39,15 +40,6 @@ describe('Middlewares 테스트', () => {
     })
 
     it("등록된 layer의 handle을 기반으로 작업 진행", () => {
-        const functions = {
-            fn1: (req, res, next) => {
-                req.value += 1;
-                next();
-            },
-            fn2: (req, res, next) => {
-                req.value += 4;
-            }
-        }
         const spyFn1 = jest.spyOn(functions, 'fn1');
         const spyFn2 = jest.spyOn(functions, 'fn2');
 
@@ -72,5 +64,16 @@ describe('Middlewares 테스트', () => {
         middlewares.handle(req, res);
 
         expect(req.value).toEqual(answer);
+    })
+
+    it("등록된 router의 handle을 기반으로 작업 진행", () => {
+        const router = new Router();
+
+        middlewares.use(functions.fn1);
+        middlewares.use(router.dispatch);
+        middlewares.use(functions.fn2);
+        middlewares.handle(req, res);
+
+        expect(req.value).toEqual(6);
     })
 })
