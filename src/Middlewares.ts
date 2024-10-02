@@ -28,18 +28,25 @@ export class Middlewares {
         const path = req.path;
         next();
 
-        function next() {
+        function next(error?) {
             let match;
             let layer
             while (match !== true && idx < stack.length) {
                 layer  = stack[idx++];
                 match = layer.match(path).result;
+                if (error) {
+                    match = false;
+                }
             }
-            process(layer)
+            process(layer, error)
         }
 
-        function process(layer) {
-            layer.handle(req, res, next);
+        function process(layer, error) {
+            if (!error) {
+                layer.handle(req, res, next);
+                return
+            }
+            layer.handle(req, res, next, error);
         }
     }
 }

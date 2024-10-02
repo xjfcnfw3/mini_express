@@ -76,4 +76,28 @@ describe('Middlewares 테스트', () => {
 
         expect(req.value).toEqual(6);
     })
+
+    it("error를 next로 전달", () => {
+        const router = new Router();
+        const error = new Error("next");
+        const functions = {
+            fn1: (req, res, next) => {
+                next(error);
+            },
+            fn2: (req, res, next) => {
+                req.value += 4;
+            },
+            fn3: (req, res, next) => {
+
+            }
+        }
+        const spyFn3 = jest.spyOn(functions, 'fn3');
+        middlewares.use(functions.fn1);
+        middlewares.use(functions.fn2);
+        middlewares.use(functions.fn3);
+
+        middlewares.handle(req, res);
+
+        expect(spyFn3).toHaveBeenCalled();
+    })
 })
