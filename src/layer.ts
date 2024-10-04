@@ -15,7 +15,27 @@ export default class Layer {
     }
 
     public handleRequest(req, res, next) {
-        this.handle(req, res, next);
+        if (this.handle.length > 3) {
+            next()
+        }
+
+        try {
+            this.handle(req, res, next);
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    public handleError(error, req, res, next) {
+        if (this.handle.length !== 4) {
+            next()
+        }
+
+        try {
+            this.handle(error, req, res, next);
+        } catch (e) {
+            next(e)
+        }
     }
 
     public match(path): {result:boolean, params:{}} {

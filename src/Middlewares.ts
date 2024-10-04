@@ -43,10 +43,10 @@ export class Middlewares {
 
         function process(layer, error) {
             if (!error) {
-                layer.handle(req, res, next);
+                layer.handleRequest(req, res, next);
                 return
             }
-            layer.handle(req, res, next, error);
+            layer.handleError(req, res, next, error);
         }
     }
 }
