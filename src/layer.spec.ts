@@ -7,7 +7,7 @@ describe("layer test", () => {
     ])("/ 경로로 설정된 layer는 반드시 true", (path) => {
         const layer = new Layer("/", () => {})
         const match = layer.match(path);
-        expect(match.result).toBe(true);
+        expect(match).toBe(true);
     })
 
     it.each([
@@ -15,7 +15,7 @@ describe("layer test", () => {
         ["/:id/:age", "/1/23", {id: "1", age: "23"}],
     ])("path parameter 추출", (path, request, answer) => {
         const layer = new Layer(path, () => {})
-        const match = layer.match(request);
-        expect(match.params).toEqual(answer);
+        layer.match(request);
+        expect(layer.params).toEqual(answer);
     })
 })

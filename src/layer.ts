@@ -1,10 +1,12 @@
 import {Keys, pathToRegexp} from "path-to-regexp";
 
 export default class Layer {
-    private handle: Function;
+    private readonly handle: Function;
     private regex: RegExp;
     private paramNames: Keys;
     private readonly existRegex;
+    private _params;
+    private _path;
 
     constructor(path : string, callback : Function) {
         this.handle = callback;
@@ -38,18 +40,36 @@ export default class Layer {
         }
     }
 
-    public match(path): {result:boolean, params:{}} {
-        if (path != null && !this.existRegex) return {result: true, params: {}};
+    public match(path) {
+        if (path != null && !this.existRegex) {
+            this._params = {}
+            this._path = ""
+            return true
+        }
         const match = this.regex.exec(path);
-        if (!match) return {result: false, params: {}};
+        if (!match) {
+            this._params = {}
+            this._path = ""
+            return false
+        }
 
         const params :any = {};
+
         for (let i = 1; i < match.length; i++) {
             const paramName = this.paramNames[i - 1].name;
             params[paramName] = this.decodeParam(match[i]);
         }
+        this._params = params;
 
-        return {result: true, params};
+        return true;
+    }
+
+    get params() {
+        return this._params;
+    }
+
+    get path() {
+        return this._path;
     }
 
     private decodeParam(value) {
