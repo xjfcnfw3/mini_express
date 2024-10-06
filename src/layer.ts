@@ -10,7 +10,7 @@ export default class Layer {
 
     constructor(path : string, callback : Function) {
         this.handle = callback;
-        const { regexp, keys } = pathToRegexp(path);
+        const { regexp, keys } = pathToRegexp(path, {end: false});
         this.paramNames = keys;
         this.regex = regexp;
         this.existRegex = path !== "/";
@@ -60,6 +60,7 @@ export default class Layer {
             params[paramName] = this.decodeParam(match[i]);
         }
         this._params = params;
+        this._path = match[0];
 
         return true;
     }

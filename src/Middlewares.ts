@@ -25,28 +25,38 @@ export class Middlewares {
     public handle(req, res) {
         let idx = 0; //현재 layer 인덱스
         const stack = this.stack;
-        const path = req.path;
+        let removedPath = "";
         next();
 
         function next(error?) {
+            if (removedPath.length > 0) {
+                req.path = removedPath + req.path;
+            }
             let match;
             let layer
+            const path = req.path;
             while (match !== true && idx < stack.length) {
                 layer  = stack[idx++];
-                match = layer.match(path).result;
-                if (error) {
-                    match = false;
-                }
+                match = layer.match(path);
             }
+            if (!match) return
             process(layer, error)
         }
 
         function process(layer, error) {
-            if (!error) {
-                layer.handleRequest(req, res, next);
+            if (error) {
+                layer.handleError(req, res, next, error);
                 return
             }
-            layer.handleError(req, res, next, error);
+            trimPath(layer);
+        }
+
+        function trimPath(layer) {
+            if (layer.path) {
+                removedPath = layer.path;
+                req.path = req.path.slice(removedPath.length);
+            }
+            layer.handleRequest(req, res, next);
         }
     }
 }

@@ -78,7 +78,6 @@ describe('Middlewares 테스트', () => {
     })
 
     it("error를 next로 전달", () => {
-        const router = new Router();
         const error = new Error("next");
         const functions = {
             fn1: (req, res, next) => {
@@ -99,5 +98,23 @@ describe('Middlewares 테스트', () => {
         middlewares.handle(req, res);
 
         expect(spyFn3).toHaveBeenCalled();
+    })
+
+    it("경로가 존재하는 layer를 지나가면 req의 baseUrl이 수정된다.", () => {
+        let result = "";
+        const req = {
+            path: "/hello/world"
+        }
+        const fn1 = (req, res, next) => {
+            result = req.path;
+            next();
+        }
+
+        middlewares.use("/hello", fn1);
+
+        middlewares.handle(req, res);
+
+        expect(result).toBe("/world");
+        expect(req.path).toBe("/hello/world");
     })
 })
